@@ -1,0 +1,61 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet"
+	      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+	      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+	      crossorigin=""/>
+
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            html, body, #map {
+                background: black;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+		crossorigin=""></script>
+ 
+        <script>
+            var map = L.map("map")
+                .setView([54.572, -4.131], 5);
+
+            L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}/?access_token={accessToken}", {
+                maxZoom: 18,
+                id: "mapbox/streets-v11",
+                accessToken: "pk.eyJ1IjoibWFnbm9zdGhlcm9ib3QiLCJhIjoiY2wxbWRpNm5hMGpiYTNwa3F5OG5rbm43YSJ9.FNqOcpEyxF8dlq4Wh0rbQA",
+                attribution: "",
+            }).addTo(map);
+
+            fetch("./stations.json")
+                .then(res => res.json())
+                .then(data => {
+                    for (station of data) {
+                        const latlong = [station.latitude, station.longitude];
+                        L.circle(latlong, {
+                            color: "red",
+                            fillcolor: "#f03",
+                            fillOpactiy: 0.5,
+                            radius: 100
+                        }).addTo(map);
+                    }
+                });
+
+            map.on("click", (e) => console.log(e.latlng));
+        </script>
+    </body>
+</html>
